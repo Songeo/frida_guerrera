@@ -1,0 +1,16 @@
+version: 0.8
+data_loading: F
+data_loading_header: F
+data_ignore:
+cache_loading: F
+recursive_loading: FALSE
+munging: F
+logging: FALSE
+logging_level: INFO
+load_libraries: T
+libraries: tidyverse, ggplot2, stringr, lubridate, httr
+as_factors: TRUE
+data_tables: FALSE
+attach_internal_libraries: FALSE
+cache_loaded_data:  TRUE
+sticky_variables: NONE

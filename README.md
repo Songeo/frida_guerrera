@@ -1,4 +1,22 @@
-# pt_template
+# FRIDA GUERRERA
+
+-----
+
+
+
+
+Basado en el esfuerzo de https://fridaguerrera.blogspot.com/
+
+
+
+### ¿Quién es Frida Guerrera?
+
+https://www.vice.com/es_mx/article/mbk7bn/frida-guerrera-desayunar-escribir-y-sonar-con-feminicidios
+
+La Columna Rota: https://www.vice.com/es_mx/topic/la-columna-rota
+
+
+-----
 
 Welcome to ProjectTemplate!
 

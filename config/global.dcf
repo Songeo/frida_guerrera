@@ -8,7 +8,7 @@ munging: F
 logging: FALSE
 logging_level: INFO
 load_libraries: T
-libraries: tidyverse, ggplot2, stringr, lubridate, httr
+libraries: tidyverse, ggplot2, stringr, lubridate, httr, rvest, bigrquery, bigQueryR, tidytext, wordcloud
 as_factors: TRUE
 data_tables: FALSE
 attach_internal_libraries: FALSE

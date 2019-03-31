@@ -3,59 +3,13 @@
 
 ### La Columna Rota 
 
+
 library(ProjectTemplate)
 load.project()
 
-library(tidytext)
-library(wordcloud)
 
-
-# function extracting
-extract_text_fun <- function(link_vec){
-  url <- paste0("https://www.vice.com", link_vec)
-  html_url <- read_html(url)
-  results <- html_nodes(html_url, xpath = "//*[(@id = 'V1C3')]")
-  
-  text <- html_text(results)[[1]] %>% 
-    as.character() %>% 
-    gsub(pattern = "@FridaGuerrera.*", "", .) %>% 
-    gsub(pattern = ".*La columna rota", "", .) %>% 
-    gsub(pattern = "FridaGuerrera", " FridaGuerrera", .) %>%
-    gsub(pattern = " Villalvazo", " Villalvazo ", .) %>%
-    gsub(pattern = "pm", " pm ", .) %>%
-    gsub(pattern = "”|“", "", .) %>% 
-    str_trim()
-  
-  tibble(links = url, 
-         text = text)
-}
-
-pages_url_text_fun <- function(url_page){
-  web_page <- read_html(url_page)
-  links <- html_attr(html_nodes(web_page, "a"), "href")
-  
-  tbl_links <- as_tibble(links) %>% 
-    filter(str_detect(value, "es_mx/article"))
-  tbl_links
-  
-  # raw text from webpages
-  text_tidy <- tbl_links %>%
-    split(.$value) %>%
-    map_df(extract_text_fun) 
-  text_tidy  
-}
-
-# Extract links
-
-pages_links <- c("https://www.vice.com/es_mx/topic/la-columna-rota?page=1",
-                 "https://www.vice.com/es_mx/topic/la-columna-rota?page=2",
-                 "https://www.vice.com/es_mx/topic/la-columna-rota?page=3",
-                 "https://www.vice.com/es_mx/topic/la-columna-rota?page=4")
-
-
-text_raw <- map(pages_links, pages_url_text_fun) %>% 
-  bind_rows()
-text_raw
+# Download data ----
+scrapping_data_fun(run_dowload = T)
 
 # unnesting and stopwords
 text_tidy <- text_raw %>%

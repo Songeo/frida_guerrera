@@ -1,18 +1,17 @@
 
-
-
 ### La Columna Rota 
 
-
 library(ProjectTemplate)
-load.project()
+reload.project()
 
 
 # Download data ----
-scrapping_data_fun(run_dowload = T)
+tbl_data <- 
+  scraping_data_fun() %>% 
+  download_data_fun()
 
 # unnesting and stopwords
-text_tidy <- text_raw %>%
+text_tidy <- tbl_data %>%
   unnest_tokens(word, text) %>% 
   anti_join(stopwords_df, 
             by = "word")

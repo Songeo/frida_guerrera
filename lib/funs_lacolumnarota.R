@@ -1,7 +1,7 @@
 
 # 1. FUNCTIONS DOWNLOAD ----
 
-# number of pages downloading ----
+# number of pages to scrap ----
 number_page_fun <- function(path_param){
   html_nodes("https://www.vice.com/es_latam/topic/la-columna-rota" %>% 
                read_html(),
@@ -45,11 +45,11 @@ text_url_fun <- function(href_url){
   tibble(header, date, text)
 }
 
-# scrapping data ----
-scrapping_data_fun <- function(run_dowload = T){
+# scraping data ----
+scraping_data_fun <- function(run_scraping = T){
   
-  if(run_dowload){
-    message("...scrapping data...")
+  if(run_scraping){
+    message("...scraping data...")
     
     # number of pages
     pages <- map_dbl(c("//*[@class='paginator__progress--current-page p-b-1-xs']", 
@@ -93,4 +93,16 @@ scrapping_data_fun <- function(run_dowload = T){
 }
 
 # download data ----
-# scrapping_data_fun <- function(run_dowload = T)
+download_data_fun <- function(status, run_download = T){
+  # downloading data
+  if(run_download){
+    qry <- "SELECT * FROM `fridaguerrera.columnarota.TextByArticle`"
+    tbl_download <- DBI::dbGetQuery(conn = DBI::dbConnect(bigquery(), 
+                                                         project = "fridaguerrera"), 
+                                   statement = qry) 
+    return(tbl_download)
+  }else{
+    return(NULL)
+  }
+  
+}

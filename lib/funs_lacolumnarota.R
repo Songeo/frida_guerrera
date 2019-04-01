@@ -32,7 +32,7 @@ text_url_fun <- function(href_url){
     reduce(paste) %>% 
     as.character()
   
-  date <- html_page %>% 
+  date_txt <- html_page %>% 
     html_nodes(xpath = "//*[@id='V1C3']//div[@data-type='article-wrapper']//
                div[@class='article__contributions__publishdate']") %>% 
     html_text(trim = T) %>% 
@@ -42,14 +42,14 @@ text_url_fun <- function(href_url){
     html_nodes(xpath = "//*[@id='V1C3']//div[@data-type='article-wrapper']//h1") %>%
     html_text(trim = T)
   
-  tibble(header, date, text)
+  tibble(header, date_txt, text)
 }
 
 # scraping data ----
 scraping_data_fun <- function(run_scraping = T){
   
   if(run_scraping){
-    message("...scraping data...")
+    message("...SCRAPING for new data...")
     
     # number of pages
     pages <- map_dbl(c("//*[@class='paginator__progress--current-page p-b-1-xs']", 
@@ -67,14 +67,18 @@ scraping_data_fun <- function(run_scraping = T){
     
     # download new data
     diff_length <- setdiff(tbl_hrefs$href, hrefs_bgqry$href) %>% length()
+    
     if(diff_length > 0){
+      
       message(paste("...", diff_length,"new articles..."))
+      
       tbl_data <- tbl_hrefs %>% 
         anti_join(hrefs_bgqry, by = "href") %>%
         mutate(text = map(href, text_url_fun)) %>% 
         unnest()  
       
       if(nrow(tbl_data)> 0){
+        
         message("...uploading new data...")
         bqr_auth()
         bqr_upload_data(projectId = "fridaguerrera" ,
@@ -87,7 +91,7 @@ scraping_data_fun <- function(run_scraping = T){
       }
       
     }else{
-      message("...no articles...")
+      message("...no new articles...")
     }
   }
   
@@ -98,7 +102,7 @@ scraping_data_fun <- function(run_scraping = T){
 download_data_fun <- function(status, run_download = T){
   # downloading data
   if(run_download){
-    message("...getting text...")
+    message("...DOWNLOADING text...")
     qry <- "SELECT * FROM `fridaguerrera.columnarota.TextByArticle`"
     tbl_download <- DBI::dbGetQuery(conn = DBI::dbConnect(bigquery(), 
                                                          project = "fridaguerrera"), 
@@ -108,4 +112,32 @@ download_data_fun <- function(status, run_download = T){
     return(NULL)
   }
   
+}
+
+
+# clean data ----
+clean_data_fun <- function(tbl_data){
+  message("...CLEANING data...")
+  tbl <- 
+    tbl_data %>% 
+    mutate_at(c("header", "date_txt", "text"), tolower) %>% 
+    separate(date_txt, c('day', 'month', 'year', 'time'), 
+             sep = " ", remove = T) %>% 
+    mutate(publication_date = paste(parse_number(day),
+                                    factor(month, c("enero", "febrero", 'marzo', 'abril',
+                                                    'mayo', 'junio', 'julio', 'agosto',
+                                                    'septiembre', 'octubre', 'noviembre', 
+                                                    'diciembre')) %>% 
+                                      as.numeric(),
+                                    parse_number(year),
+                                    str_sub(time %>% str_trim, start = 0, -3)) %>% dmy_hm) %>% 
+    dplyr::select(-day, -month, -year, -time) %>% 
+    mutate_at(c("text", "header"), function(col){
+      col %>% 
+        str_replace_all('"', "") %>% 
+        str_replace_all('“', "") %>% 
+        str_replace_all('”', "") 
+    }) 
+  
+  return(tbl)
 }

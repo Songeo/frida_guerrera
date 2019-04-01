@@ -1,16 +1,17 @@
-version: 0.8
-data_loading: F
-data_loading_header: F
+version: 0.8.2
+data_loading: FALSE
+data_loading_header: FALSE
 data_ignore:
-cache_loading: T
+cache_loading: TRUE
 recursive_loading: FALSE
-munging: T
+munging: TRUE
 logging: FALSE
 logging_level: INFO
-load_libraries: T
-libraries: tidyverse, ggplot2, stringr, lubridate, httr, rvest, bigrquery, bigQueryR, tidytext, wordcloud, tm
+load_libraries: TRUE
+libraries: tidyverse, ggplot2, stringr, lubridate, httr, rvest, bigrquery, bigQueryR, tidytext, wordcloud,
+            tm
 as_factors: TRUE
 data_tables: FALSE
 attach_internal_libraries: FALSE
-cache_loaded_data:  TRUE
+cache_loaded_data: TRUE
 sticky_variables: NONE

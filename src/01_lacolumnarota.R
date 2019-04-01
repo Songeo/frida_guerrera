@@ -8,13 +8,15 @@ reload.project()
 # Download data ----
 tbl_data <- 
   scraping_data_fun() %>% 
-  download_data_fun()
+  download_data_fun() %>% 
+  clean_data_fun()
+
+
 
 # unnesting by word and removing stopwords ----
 tbl_words_tidy <- tbl_data %>%
   unnest_tokens(word, text) %>% 
-  anti_join(stop_words_tbl, 
-            by = "word")
+  anti_join(stop_words_tbl, by = "word")
 tbl_words_tidy
 
 # wordcloud raw
@@ -23,10 +25,12 @@ tbl_words_tidy %>%
   with(wordcloud(word, n, max.words = 40))
 
 
-# count 
-text_count_words <- text_tidy %>% 
-  count(links, word)
-text_count_words
+ 
+tbl_words_tidy %>% 
+  group_by(href) %>% 
+  tally() %>% 
+  ggplot(aes(x = n)) + 
+  geom_histogram(bins = 15)
 
 # total words
 total_words <- text_count_words %>% 

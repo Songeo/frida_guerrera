@@ -10,15 +10,15 @@ tbl_data <-
   scraping_data_fun() %>% 
   download_data_fun()
 
-# unnesting and stopwords
-text_tidy <- tbl_data %>%
+# unnesting by word and removing stopwords ----
+tbl_words_tidy <- tbl_data %>%
   unnest_tokens(word, text) %>% 
-  anti_join(stopwords_df, 
+  anti_join(stop_words_tbl, 
             by = "word")
-text_tidy
+tbl_words_tidy
 
 # wordcloud raw
-text_tidy %>%
+tbl_words_tidy %>%
   count(word) %>%
   with(wordcloud(word, n, max.words = 40))
 

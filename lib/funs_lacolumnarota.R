@@ -66,8 +66,10 @@ scraping_data_fun <- function(run_scraping = T){
       unique()
     
     # download new data
-    if((setdiff(tbl_hrefs$href, hrefs_bgqry$href) %>% length()) >0){
-      tbl_data <-tbl_hrefs %>% 
+    diff_length <- setdiff(tbl_hrefs$href, hrefs_bgqry$href) %>% length()
+    if(diff_length > 0){
+      message(paste("...", diff_length,"new articles..."))
+      tbl_data <- tbl_hrefs %>% 
         anti_join(hrefs_bgqry, by = "href") %>%
         mutate(text = map(href, text_url_fun)) %>% 
         unnest()  
@@ -85,7 +87,7 @@ scraping_data_fun <- function(run_scraping = T){
       }
       
     }else{
-      message("...no new data...")
+      message("...no articles...")
     }
   }
   
@@ -96,6 +98,7 @@ scraping_data_fun <- function(run_scraping = T){
 download_data_fun <- function(status, run_download = T){
   # downloading data
   if(run_download){
+    message("...getting text...")
     qry <- "SELECT * FROM `fridaguerrera.columnarota.TextByArticle`"
     tbl_download <- DBI::dbGetQuery(conn = DBI::dbConnect(bigquery(), 
                                                          project = "fridaguerrera"), 

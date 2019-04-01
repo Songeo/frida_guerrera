@@ -2,9 +2,9 @@ version: 0.8
 data_loading: F
 data_loading_header: F
 data_ignore:
-cache_loading: F
+cache_loading: T
 recursive_loading: FALSE
-munging: F
+munging: T
 logging: FALSE
 logging_level: INFO
 load_libraries: T

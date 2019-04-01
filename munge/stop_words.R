@@ -14,7 +14,6 @@ if(stpwds_nonexists){
              col_names = c("row_num", "word")) %>% 
     dplyr::select(-row_num) %>% 
     bind_rows(sw) %>% 
-    bind_rows(tibble(word = c("2016", '2017'))) %>% 
     unique()
   
   rm("sw")

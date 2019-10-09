@@ -52,8 +52,8 @@ scraping_data_fun <- function(run_scraping = T){
     message("...SCRAPING for new data...")
     
     # number of pages
-    pages <- map_dbl(c("//*[@class='paginator__progress--current-page p-b-1-xs']", 
-                       "//*[@class='paginator__progress--last-page p-t-1-xs']"),
+    pages <- map_dbl(c("//*[@class='paginator__progress--current-page p-b-1--xs']", 
+                       "//*[@class='paginator__progress--last-page p-t-1--xs']"),
                      number_page_fun)
     
     # hrefs comparison
@@ -115,7 +115,17 @@ download_data_fun <- function(status, run_download = T){
 }
 
 
+
+
+
 # clean data ----
+time_convertion_fun <- function(col_time){
+  # col_time <- tbl$time
+  col_hm <- hm(col_time)
+  col_hm[str_detect(col_time, "pm")] <- col_hm[str_detect(col_time, "pm")] + hours(12)
+  return(col_hm)
+}
+
 clean_data_fun <- function(tbl_data){
   message("...CLEANING data...")
   tbl <- 
@@ -123,14 +133,15 @@ clean_data_fun <- function(tbl_data){
     mutate_at(c("header", "date_txt", "text"), tolower) %>% 
     separate(date_txt, c('day', 'month', 'year', 'time'), 
              sep = " ", remove = T) %>% 
-    mutate(publication_date = paste(parse_number(day),
-                                    factor(month, c("enero", "febrero", 'marzo', 'abril',
-                                                    'mayo', 'junio', 'julio', 'agosto',
-                                                    'septiembre', 'octubre', 'noviembre', 
-                                                    'diciembre')) %>% 
-                                      as.numeric(),
-                                    parse_number(year),
-                                    str_sub(time %>% str_trim, start = 0, -3)) %>% dmy_hm) %>% 
+    mutate(publication_ts = paste(parse_number(day),
+                                  factor(month, c("enero", "febrero", 'marzo', 
+                                                  'abril', 'mayo', 'junio', 
+                                                  'julio', 'agosto', 'septiembre', 
+                                                  'octubre', 'noviembre', 'diciembre')) %>% 
+                                    as.numeric(),
+                                  parse_number(year), 
+                                  time_convertion_fun(time)) %>% 
+             dmy_hms) %>% 
     dplyr::select(-day, -month, -year, -time) %>% 
     mutate_at(c("text", "header"), function(col){
       col %>% 

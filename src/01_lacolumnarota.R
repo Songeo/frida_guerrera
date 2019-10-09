@@ -13,8 +13,10 @@ tbl_data <-
 
 
 
+
 # unnesting by word and removing stopwords ----
-tbl_words_tidy <- tbl_data %>%
+tbl_words_tidy <-
+  tbl_data %>%
   unnest_tokens(word, text) %>% 
   anti_join(stop_words_tbl, by = "word")
 tbl_words_tidy
@@ -33,7 +35,8 @@ tbl_words_tidy %>%
   geom_histogram(bins = 15)
 
 # total words
-total_words <- text_count_words %>% 
+total_words <- 
+  text_count_words %>% 
   group_by(links) %>% 
   summarise(total = sum(n)) %>% 
   ungroup()
